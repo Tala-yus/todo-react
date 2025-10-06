@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import TaskInput from "./components/TaskInput";
 import Filters from "./components/Filters";
 import TaskList from "./components/TaskList";
+import CalendarView from "./components/CalendarView";
 import confetti from "canvas-confetti";
 
 function App() {
@@ -10,9 +11,9 @@ function App() {
     const saved = localStorage.getItem("tasks");
     return saved ? JSON.parse(saved) : [];
   });
-
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [filter, setFilter] = useState("all");
+  const [view, setView] = useState("list");
 
   // Persist tasks
   useEffect(() => {
@@ -77,13 +78,34 @@ function App() {
           total={tasks.length}
           remaining={remaining}
         />
-        <TaskList
-          tasks={tasks}
-          setTasks={setTasks}
-          filter={filter}
-          onToggle={toggleTask}
-          onDelete={deleteTask}
-        />
+
+        {/* View Toggle */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setView("list")}
+            className={`px-3 py-1 rounded-md ${view === "list" ? "bg-purple-500 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"}`}
+          >
+            List View
+          </button>
+          <button
+            onClick={() => setView("calendar")}
+            className={`px-3 py-1 rounded-md ${view === "calendar" ? "bg-purple-500 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"}`}
+          >
+            Calendar View
+          </button>
+        </div>
+
+        {view === "list" ? (
+          <TaskList
+            tasks={tasks}
+            setTasks={setTasks}
+            filter={filter}
+            onToggle={toggleTask}
+            onDelete={deleteTask}
+          />
+        ) : (
+          <CalendarView tasks={tasks} setTasks={setTasks} darkMode={darkMode} />
+        )}
       </div>
     </div>
   );
