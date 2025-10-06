@@ -19,7 +19,6 @@ className={`px-3 py-1 rounded-md ${filter === "completed" ? "bg-purple-500 text-
 >
 Completed </button> </div>
 
-```
   <div className="flex items-center gap-3">
     <span className="text-sm text-gray-600 dark:text-gray-300">{remaining}/{total}</span>
     <button onClick={clearCompleted} className="text-sm text-red-500 hover:text-red-700">Clear Completed</button>
