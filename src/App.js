@@ -6,111 +6,78 @@ import TaskList from "./components/TaskList";
 import confetti from "canvas-confetti";
 
 function App() {
-const [tasks, setTasks] = useState(() => {
-const saved = localStorage.getItem("tasks");
-return saved ? JSON.parse(saved) : [];
-});
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem("tasks");
+    return saved ? JSON.parse(saved) : [];
+  });
 
-const [darkMode, setDarkMode] = useState(() => {
-return localStorage.getItem("theme") === "dark";
-});
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
+  const [filter, setFilter] = useState("all");
 
-const [filter, setFilter] = useState("all"); // "all" | "active" | "completed"
+  // Persist tasks
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
 
-// persist tasks
-useEffect(() => {
-localStorage.setItem("tasks", JSON.stringify(tasks));
-}, [tasks]);
+  // Persist theme
+  useEffect(() => {
+    if (darkMode) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
 
-// persist theme + apply to <html>
-useEffect(() => {
-if (darkMode) {
-document.documentElement.classList.add("dark");
-localStorage.setItem("theme", "dark");
-} else {
-document.documentElement.classList.remove("dark");
-localStorage.setItem("theme", "light");
-}
-}, [darkMode]);
+  // Confetti when all done
+  useEffect(() => {
+    if (tasks.length > 0 && tasks.every((t) => t.done)) {
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    }
+  }, [tasks]);
 
-// confetti when all tasks are completed
-useEffect(() => {
-if (tasks.length > 0 && tasks.every((t) => t.done)) {
-confetti({
-particleCount: 150,
-spread: 70,
-origin: { y: 0.6 },
-});
-}
-}, [tasks]);
+  function addTask(title) {
+    const t = title.trim();
+    if (!t) return;
+    setTasks((prev) => [...prev, { id: Date.now(), text: t, done: false }]);
+    setFilter("all");
+  }
 
-// simple beep using Web Audio API
-function playBeep() {
-try {
-const ctx = new (window.AudioContext || window.webkitAudioContext)();
-const o = ctx.createOscillator();
-const g = ctx.createGain();
-o.type = "sine";
-o.frequency.value = 880;
-o.connect(g);
-g.connect(ctx.destination);
-g.gain.setValueAtTime(0.0001, ctx.currentTime);
-o.start();
-g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.01);
-g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
-o.stop(ctx.currentTime + 0.21);
-} catch (e) {
-// ignore if browser blocks AudioContext until user interaction
-// it's fine — confetti still works
-}
-}
+  function toggleTask(id) {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
+    );
+  }
 
-function addTask(title) {
-const t = title.trim();
-if (!t) return;
-setTasks((prev) => [...prev, { id: Date.now(), text: t, done: false }]);
-setFilter("all");
-}
+  function deleteTask(id) {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+  }
 
-function toggleTask(id) {
-let becameDone = false;
-setTasks((prev) =>
-prev.map((t) => {
-if (t.id === id) {
-const newDone = !t.done;
-if (newDone) becameDone = true;
-return { ...t, done: newDone };
-}
-return t;
-})
-);
-if (becameDone) playBeep();
-}
+  function clearCompleted() {
+    setTasks((prev) => prev.filter((t) => !t.done));
+  }
 
-function deleteTask(id) {
-setTasks((prev) => prev.filter((t) => t.id !== id));
-}
+  const remaining = tasks.filter((t) => !t.done).length;
 
-function clearCompleted() {
-setTasks((prev) => prev.filter((t) => !t.done));
-}
-
-const filteredTasks = tasks.filter((t) => {
-if (filter === "active") return !t.done;
-if (filter === "completed") return t.done;
-return true;
-});
-
-const remaining = tasks.filter((t) => !t.done).length;
-
-return ( <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors p-6"> <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl w-full max-w-md p-6"> <Header darkMode={darkMode} setDarkMode={setDarkMode} remaining={remaining} /> <TaskInput onAdd={addTask} /> <Filters
-       filter={filter}
-       setFilter={setFilter}
-       clearCompleted={clearCompleted}
-       total={tasks.length}
-       remaining={remaining}
-     /> <TaskList tasks={filteredTasks} onToggle={toggleTask} onDelete={deleteTask} /> </div> </div>
-);
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors p-6">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl w-full max-w-md p-6">
+        <Header darkMode={darkMode} setDarkMode={setDarkMode} remaining={remaining} />
+        <TaskInput onAdd={addTask} />
+        <Filters
+          filter={filter}
+          setFilter={setFilter}
+          clearCompleted={clearCompleted}
+          total={tasks.length}
+          remaining={remaining}
+        />
+        <TaskList
+          tasks={tasks}
+          setTasks={setTasks}
+          filter={filter}
+          onToggle={toggleTask}
+          onDelete={deleteTask}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default App;
