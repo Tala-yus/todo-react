@@ -33,28 +33,37 @@ function App() {
     }
   }, [tasks]);
 
-  function addTask(title) {
-    const t = title.trim();
+  function addTask({ text, dueDate, priority }) {
+    const t = text.trim();
     if (!t) return;
-    setTasks((prev) => [...prev, { id: Date.now(), text: t, done: false }]);
+    setTasks(prev => [
+      ...prev,
+      {
+        id: Date.now(),
+        text: t,
+        done: false,
+        dueDate: dueDate || null,
+        priority: priority || "Normal",
+      }
+    ]);
     setFilter("all");
   }
 
   function toggleTask(id) {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
+    setTasks(prev =>
+      prev.map(t => (t.id === id ? { ...t, done: !t.done } : t))
     );
   }
 
   function deleteTask(id) {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+    setTasks(prev => prev.filter(t => t.id !== id));
   }
 
   function clearCompleted() {
-    setTasks((prev) => prev.filter((t) => !t.done));
+    setTasks(prev => prev.filter(t => !t.done));
   }
 
-  const remaining = tasks.filter((t) => !t.done).length;
+  const remaining = tasks.filter(t => !t.done).length;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors p-6">

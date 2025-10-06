@@ -1,4 +1,6 @@
 import React from "react";
+import {motion } from "framer-motion";
+
 import {
   DndContext,
   closestCenter,
@@ -11,14 +13,13 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from "@dnd-kit/sortable";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import SortableItem from "./SortableItem";
 
 export default function TaskList({ tasks, setTasks, filter, onToggle, onDelete }) {
   const sensors = useSensors(useSensor(PointerSensor));
 
-  // Filter tasks for current view
-  const visibleTasks = tasks.filter((t) => {
+  const visibleTasks = tasks.filter(t => {
     if (filter === "active") return !t.done;
     if (filter === "completed") return t.done;
     return true;
@@ -28,8 +29,8 @@ export default function TaskList({ tasks, setTasks, filter, onToggle, onDelete }
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const oldIndex = tasks.findIndex((t) => t.id === active.id);
-    const newIndex = tasks.findIndex((t) => t.id === over.id);
+    const oldIndex = tasks.findIndex(t => t.id === active.id);
+    const newIndex = tasks.findIndex(t => t.id === over.id);
     if (oldIndex === -1 || newIndex === -1) return;
 
     setTasks(arrayMove(tasks, oldIndex, newIndex));
@@ -37,7 +38,7 @@ export default function TaskList({ tasks, setTasks, filter, onToggle, onDelete }
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={visibleTasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+      <SortableContext items={visibleTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
         <ul className="space-y-2">
           <AnimatePresence initial={false}>
             {visibleTasks.length === 0 ? (
@@ -51,7 +52,7 @@ export default function TaskList({ tasks, setTasks, filter, onToggle, onDelete }
                 No tasks yet — add one!
               </motion.li>
             ) : (
-              visibleTasks.map((task) => (
+              visibleTasks.map(task => (
                 <SortableItem
                   key={task.id}
                   id={task.id}

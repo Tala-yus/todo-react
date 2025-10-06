@@ -8,6 +8,18 @@ export default function SortableItem({ id, task, onToggle, onDelete }) {
 
   const style = { transform: CSS.Transform.toString(transform), transition };
 
+  const today = new Date();
+  const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+  const isOverdue = dueDate && !task.done && dueDate < today;
+
+  // Priority color logic
+  const priorityColor =
+    task.priority === "High"
+      ? "text-red-600 dark:text-red-400"
+      : task.priority === "Low"
+      ? "text-green-600 dark:text-green-400"
+      : "text-gray-800 dark:text-gray-100";
+
   return (
     <motion.li
       ref={setNodeRef}
@@ -19,33 +31,39 @@ export default function SortableItem({ id, task, onToggle, onDelete }) {
       {...attributes}
       className={`flex items-center justify-between bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded-lg shadow-sm ${
         isDragging ? "opacity-60" : ""
-      }`}
+      } ${isOverdue ? "ring-1 ring-red-400 dark:ring-red-500" : ""}`}
     >
       {/* Drag handle */}
-      <div {...listeners} className="mr-3 cursor-grab select-none text-gray-400" title="Drag to reorder" onClick={(e) => e.stopPropagation()}>
+      <div
+        {...listeners}
+        className="mr-3 cursor-grab select-none text-gray-400"
+        title="Drag to reorder"
+      >
         ☰
       </div>
 
-      {/* Task label + checkbox */}
-      <label className="flex items-center gap-3 flex-1 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={!!task.done}
-          onChange={(e) => { e.stopPropagation(); onToggle(task.id); }}
-          className="w-4 h-4 rounded"
-          aria-label={`Mark ${task.text} done`}
-        />
-        <span
-          className={`select-none ${task.done ? "line-through text-gray-400" : "text-gray-800 dark:text-gray-100"}`}
-          onClick={() => onToggle(task.id)} // toggle when clicking text
-        >
-          {task.text}
+      {/* Task text + checkbox + dueDate/priority */}
+      <div className="flex flex-1 flex-col">
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            checked={!!task.done}
+            onChange={() => onToggle(task.id)}
+            className="w-4 h-4 rounded"
+            aria-label={`Mark ${task.text} done`}
+          />
+          <span className={`select-none ${task.done ? "line-through text-gray-400" : priorityColor}`}>
+            {task.text}
+          </span>
+        </div>
+        <span className={`text-xs ${isOverdue ? "text-red-600 dark:text-red-400 font-bold" : "text-gray-500 dark:text-gray-300"}`}>
+          {task.dueDate ? `Due: ${task.dueDate}` : ""} {task.priority ? `| Priority: ${task.priority}` : ""}
         </span>
-      </label>
+      </div>
 
       {/* Delete button */}
       <button
-        onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
+        onClick={() => onDelete(task.id)}
         className="text-red-500 hover:text-red-700 dark:hover:text-red-400 ml-2"
         aria-label="Delete task"
       >
