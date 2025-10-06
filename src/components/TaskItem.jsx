@@ -20,7 +20,6 @@ aria-label={`Mark ${task.text} done`}
 <span className={`select-none ${task.done ? "line-through text-gray-400" : "text-gray-800 dark:text-gray-100"}`}>
 {task.text} </span> </label>
 
-```
   <div className="flex items-center gap-2">
     <button onClick={() => onDelete(task.id)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400" aria-label="Delete task">
       ✕
