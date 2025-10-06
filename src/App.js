@@ -15,21 +15,18 @@ function App() {
   const [filter, setFilter] = useState("all");
   const [view, setView] = useState("list");
 
-  // Persist tasks
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
-  // Persist theme
   useEffect(() => {
     if (darkMode) document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
-  // Confetti when all done
   useEffect(() => {
-    if (tasks.length > 0 && tasks.every((t) => t.done)) {
+    if (tasks.length > 0 && tasks.every(t => t.done)) {
       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     }
   }, [tasks]);
@@ -51,9 +48,7 @@ function App() {
   }
 
   function toggleTask(id) {
-    setTasks(prev =>
-      prev.map(t => (t.id === id ? { ...t, done: !t.done } : t))
-    );
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
   }
 
   function deleteTask(id) {
@@ -104,7 +99,7 @@ function App() {
             onDelete={deleteTask}
           />
         ) : (
-          <CalendarView tasks={tasks} setTasks={setTasks} darkMode={darkMode} />
+          <CalendarView tasks={tasks} darkMode={darkMode} />
         )}
       </div>
     </div>
