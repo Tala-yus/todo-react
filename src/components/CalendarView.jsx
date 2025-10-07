@@ -1,111 +1,104 @@
-import React, { useState } from "react";
+import React from "react";
 import Calendar from "react-calendar";
-import { motion } from "framer-motion";
 import 'react-calendar/dist/Calendar.css';
 
-export default function CalendarView({ tasks, darkMode }) {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  const tasksForDate = tasks.filter(task =>
-    task.dueDate && new Date(task.dueDate).toDateString() === selectedDate.toDateString()
-  );
+export default function CalendarView({ tasks, darkMode, selectedDate, setSelectedDate }) {
+  const tasksForDate = tasks.filter(task => task.dueDate && new Date(task.dueDate).toDateString() === selectedDate.toDateString());
 
   const tileClassName = ({ date, view }) => {
     if (view === "month") {
-      const hasTask = tasks.some(task =>
-        task.dueDate && new Date(task.dueDate).toDateString() === date.toDateString()
-      );
-      return hasTask ? "bg-purple-200 dark:bg-purple-600 rounded" : null;
+      const hasTask = tasks.some(task => task.dueDate && new Date(task.dueDate).toDateString() === date.toDateString());
+      const isToday = date.toDateString() === new Date().toDateString();
+      return [
+        "rounded-lg transition-all",
+        hasTask ? "bg-purple-200 dark:bg-purple-600" : "",
+        isToday ? "ring-2 ring-purple-500 dark:ring-purple-400" : ""
+      ].join(" ");
     }
   };
 
   const tileContent = ({ date, view }) => {
     if (view !== "month") return null;
 
-    const tasksOnDate = tasks.filter(
-      task => task.dueDate && new Date(task.dueDate).toDateString() === date.toDateString()
-    );
-
-    if (tasksOnDate.length === 0) return null;
-
-    const displayTasks = tasksOnDate.slice(0, 3);
-    const extra = tasksOnDate.length - displayTasks.length;
+    const tasksOnDate = tasks.filter(task => task.dueDate && new Date(task.dueDate).toDateString() === date.toDateString());
+    if (!tasksOnDate.length) return null;
 
     return (
-      <div className="relative flex justify-center mt-1 group">
-        {/* Dots */}
-        <div className="flex gap-0.5">
-          {displayTasks.map(task => (
-            <span
-              key={task.id}
-              className={`w-2 h-2 rounded-full ${
-                task.priority === "High" ? "bg-red-500" :
-                task.priority === "Low" ? "bg-green-500" : "bg-gray-500"
-              }`}
-            ></span>
-          ))}
-          {extra > 0 && (
-            <span className="text-xs text-gray-600 dark:text-gray-300 ml-0.5">+{extra}</span>
-          )}
-        </div>
-
-        {/* Tooltip rendered outside tile */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-40 max-h-48 p-2 bg-white dark:bg-gray-700 rounded shadow-lg text-xs text-gray-800 dark:text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none overflow-auto z-50">
-          {tasksOnDate.map(task => (
-            <div key={task.id} className="break-words py-0.5">
-              {task.text} {task.priority ? `| ${task.priority}` : ""}
-            </div>
-          ))}
-        </div>
+      <div className="flex justify-center mt-1 gap-1">
+        {tasksOnDate.slice(0, 3).map(task => (
+          <span
+            key={task.id}
+            className={`w-2 h-2 rounded-full ${
+              task.priority === "High" ? "bg-red-500" :
+              task.priority === "Low" ? "bg-green-500" : "bg-gray-500"
+            }`}
+          />
+        ))}
+        {tasksOnDate.length > 3 && (
+          <span className="text-xs text-gray-600 dark:text-gray-300">+{tasksOnDate.length - 3}</span>
+        )}
       </div>
     );
   };
 
   return (
-    <div className="mt-4">
+    <div className="text-gray-800 dark:text-gray-100">
       <Calendar
         onChange={setSelectedDate}
         value={selectedDate}
-        className={`w-full rounded-lg overflow-visible ${darkMode ? "react-calendar-dark" : ""}`}
+        className={`w-full rounded-lg overflow-visible shadow-md ${
+          darkMode ? "react-calendar-dark" : "react-calendar-light"
+        }`}
         tileClassName={tileClassName}
         tileContent={tileContent}
       />
 
       <div className="mt-4">
         {tasksForDate.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-            No tasks for this date.
-          </p>
+          <p className="text-gray-500 dark:text-gray-400 text-center py-2">No tasks for this date.</p>
         ) : (
           <ul className="space-y-2">
             {tasksForDate.map(task => (
-              <motion.li
-                key={task.id}
-                layout
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: 40 }}
-                className={`flex justify-between items-center px-3 py-2 rounded-md shadow-sm bg-gray-50 dark:bg-gray-700`}
-              >
-                <span className={`${task.done ? "line-through text-gray-400 dark:text-gray-300" : "text-gray-800 dark:text-gray-100"}`}>
-                  {task.text} {task.priority ? `| ${task.priority}` : ""}
-                </span>
-              </motion.li>
+              <li key={task.id} className="px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-md shadow-sm">
+                {task.text} {task.priority ? `| ${task.priority}` : ""}
+              </li>
             ))}
           </ul>
         )}
       </div>
 
       <style>{`
+        /* Light mode */
+        .react-calendar-light {
+          background-color: #f9f9fb;
+          border: none;
+          color: #111827;
+        }
+        .react-calendar-light .react-calendar__tile {
+          transition: all 0.2s;
+        }
+        .react-calendar-light .react-calendar__tile:hover {
+          background-color: #e0d7ff;
+          border-radius: 0.5rem;
+        }
+
+        /* Dark mode */
         .react-calendar-dark {
           background-color: #1f2937;
           color: #f3f4f6;
+          border: none;
+        }
+        .react-calendar-dark .react-calendar__tile {
+          transition: all 0.2s;
+        }
+        .react-calendar-dark .react-calendar__tile:hover {
+          background-color: #4c1d95;
           border-radius: 0.5rem;
         }
-        .react-calendar-dark .react-calendar__tile--now {
-          background: #4f46e5;
-          color: white;
-          border-radius: 0.5rem;
+
+        /* Current day */
+        .react-calendar__tile--now {
+          font-weight: bold;
         }
       `}</style>
     </div>

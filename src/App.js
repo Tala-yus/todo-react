@@ -11,13 +11,12 @@ function App() {
     const saved = localStorage.getItem("tasks");
     return saved ? JSON.parse(saved) : [];
   });
+
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [filter, setFilter] = useState("all");
-  const [view, setView] = useState("list");
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+  useEffect(() => localStorage.setItem("tasks", JSON.stringify(tasks)), [tasks]);
 
   useEffect(() => {
     if (darkMode) document.documentElement.classList.add("dark");
@@ -31,76 +30,32 @@ function App() {
     }
   }, [tasks]);
 
-  function addTask({ text, dueDate, priority }) {
-    const t = text.trim();
-    if (!t) return;
-    setTasks(prev => [
-      ...prev,
-      {
-        id: Date.now(),
-        text: t,
-        done: false,
-        dueDate: dueDate || null,
-        priority: priority || "Normal",
-      }
-    ]);
-    setFilter("all");
-  }
-
-  function toggleTask(id) {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  }
-
-  function deleteTask(id) {
-    setTasks(prev => prev.filter(t => t.id !== id));
-  }
-
-  function clearCompleted() {
-    setTasks(prev => prev.filter(t => !t.done));
-  }
-
   const remaining = tasks.filter(t => !t.done).length;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors p-6">
-      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl w-full max-w-md p-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors">
+      <div className="max-w-7xl mx-auto p-6 flex flex-col h-screen">
         <Header darkMode={darkMode} setDarkMode={setDarkMode} remaining={remaining} />
-        <TaskInput onAdd={addTask} />
-        <Filters
-          filter={filter}
-          setFilter={setFilter}
-          clearCompleted={clearCompleted}
-          total={tasks.length}
-          remaining={remaining}
-        />
 
-        {/* View Toggle */}
-        <div className="flex gap-2 mb-4">
-          <button
-            onClick={() => setView("list")}
-            className={`px-3 py-1 rounded-md ${view === "list" ? "bg-purple-500 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"}`}
-          >
-            List View
-          </button>
-          <button
-            onClick={() => setView("calendar")}
-            className={`px-3 py-1 rounded-md ${view === "calendar" ? "bg-purple-500 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"}`}
-          >
-            Calendar View
-          </button>
+        <div className="flex flex-1 gap-6 mt-4">
+          {/* Sidebar */}
+          <div className="w-80 flex-shrink-0 bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-4 overflow-y-auto">
+            <CalendarView tasks={tasks} darkMode={darkMode} selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+          </div>
+
+          {/* Main area */}
+          <div className="flex-1 flex flex-col bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 overflow-y-auto">
+            <TaskInput onAdd={(task) => setTasks(prev => [...prev, task])} />
+            <Filters filter={filter} setFilter={setFilter} clearCompleted={() => setTasks(prev => prev.filter(t => !t.done))} total={tasks.length} remaining={remaining} />
+            <TaskList
+              tasks={tasks.filter(t => !t.dueDate || new Date(t.dueDate).toDateString() === selectedDate.toDateString())}
+              setTasks={setTasks}
+              filter={filter}
+              onToggle={id => setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))}
+              onDelete={id => setTasks(prev => prev.filter(t => t.id !== id))}
+            />
+          </div>
         </div>
-
-        {view === "list" ? (
-          <TaskList
-            tasks={tasks}
-            setTasks={setTasks}
-            filter={filter}
-            onToggle={toggleTask}
-            onDelete={deleteTask}
-          />
-        ) : (
-          <CalendarView tasks={tasks} darkMode={darkMode} />
-        )}
       </div>
     </div>
   );
