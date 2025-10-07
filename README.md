@@ -1,70 +1,53 @@
-# Getting Started with Create React App
+# 🌸 My To-Do List – Interactive React Task Manager
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An interactive and visually engaging task manager built with **React**, featuring a calendar view, stickers, task prioritization, dark mode, progress tracking, and smooth animations.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Task Management**: Add, edit, delete, and complete tasks.
+- **Priority Levels & Stickers**: Assign priorities and fun stickers to tasks.
+- **Calendar Integration**: View tasks on calendar tiles with sticker visualization.
+- **Progress Tracking**: Dynamic progress bar shows task completion.
+- **Dark Mode**: Toggle between light and dark themes.
+- **Drag & Drop**: Reorder tasks with smooth animations using DND Kit and Framer Motion.
+- **Confetti Celebration**: Celebrate completing all tasks with animated confetti.
+- **Responsive UI**: Elegant, scrollable task lists with Tailwind CSS styling.
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **React** – Core library for building the UI.
+- **Tailwind CSS** – Styling and responsive layout.
+- **React Calendar** – Calendar visualization.
+- **Framer Motion** – Animations for tasks and list interactions.
+- **DND Kit** – Drag-and-drop functionality for task reordering.
+- **Canvas-Confetti** – Confetti effect on completing all tasks.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+git clone <repository_url>
+cd my-todo-list
+Install dependencies:
 
-### `npm run build`
+bash
+Copy code
+npm install
+Start the development server:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+bash
+Copy code
+npm start
+Usage
+Add tasks using the input box.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Assign priority and stickers to tasks.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Switch between calendar and list view.
 
-### `npm run eject`
+Drag tasks to reorder them.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Toggle dark mode using the button at the top.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Complete all tasks to trigger confetti celebration.
