@@ -25,10 +25,13 @@ An interactive and visually engaging task manager built with **React**, featurin
 ## Installation
 
 1. Clone the repository:
-
-```bash
 git clone <repository_url>
 cd my-todo-list
+2. Install dependencies:
+npm install
+3. Start the development server:
+npm start
+
 Install dependencies:
 
 bash
@@ -36,18 +39,16 @@ Copy code
 npm install
 Start the development server:
 
-bash
-Copy code
-npm start
 Usage
-Add tasks using the input box.
 
-Assign priority and stickers to tasks.
+1.Add tasks using the input box.
 
-Switch between calendar and list view.
+2.Assign priority and stickers to tasks.
 
-Drag tasks to reorder them.
+3.Switch between calendar and list view.
 
-Toggle dark mode using the button at the top.
+4.Drag tasks to reorder them.
 
-Complete all tasks to trigger confetti celebration.
+5.Toggle dark mode using the button at the top.
+
+6.Complete all tasks to trigger confetti celebration.
