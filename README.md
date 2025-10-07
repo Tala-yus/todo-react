@@ -25,7 +25,7 @@ An interactive and visually engaging task manager built with **React**, featurin
 ## Installation
 
 1. Clone the repository:
-git clone <repository_url>
+git clone (https://github.com/Tala-yus/todo-react)
 cd my-todo-list
 2. Install dependencies:
 npm install
