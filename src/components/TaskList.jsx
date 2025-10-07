@@ -1,20 +1,9 @@
 import React from "react";
-import {motion } from "framer-motion";
-
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
-import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import SortableItem from "./SortableItem";
+import { DndContext, closestCenter, useSensor, useSensors, PointerSensor } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import { AnimatePresence } from "framer-motion";
 
 export default function TaskList({ tasks, setTasks, filter, onToggle, onDelete }) {
   const sensors = useSensors(useSensor(PointerSensor));
@@ -28,11 +17,9 @@ export default function TaskList({ tasks, setTasks, filter, onToggle, onDelete }
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-
     const oldIndex = tasks.findIndex(t => t.id === active.id);
     const newIndex = tasks.findIndex(t => t.id === over.id);
     if (oldIndex === -1 || newIndex === -1) return;
-
     setTasks(arrayMove(tasks, oldIndex, newIndex));
   };
 

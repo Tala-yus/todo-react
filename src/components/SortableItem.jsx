@@ -5,14 +5,11 @@ import { motion } from "framer-motion";
 
 export default function SortableItem({ id, task, onToggle, onDelete }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-
   const style = { transform: CSS.Transform.toString(transform), transition };
-
   const today = new Date();
   const dueDate = task.dueDate ? new Date(task.dueDate) : null;
   const isOverdue = dueDate && !task.done && dueDate < today;
 
-  // Priority color logic
   const priorityColor =
     task.priority === "High"
       ? "text-red-600 dark:text-red-400"
@@ -29,20 +26,9 @@ export default function SortableItem({ id, task, onToggle, onDelete }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: 40 }}
       {...attributes}
-      className={`flex items-center justify-between bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded-lg shadow-sm ${
-        isDragging ? "opacity-60" : ""
-      } ${isOverdue ? "ring-1 ring-red-400 dark:ring-red-500" : ""}`}
+      className={`flex items-center justify-between bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded-lg shadow-sm ${isDragging ? "opacity-60" : ""} ${isOverdue ? "ring-1 ring-red-400 dark:ring-red-500" : ""}`}
     >
-      {/* Drag handle */}
-      <div
-        {...listeners}
-        className="mr-3 cursor-grab select-none text-gray-400"
-        title="Drag to reorder"
-      >
-        ☰
-      </div>
-
-      {/* Task text + checkbox + dueDate/priority */}
+      <div {...listeners} className="mr-3 cursor-grab select-none text-gray-400" title="Drag to reorder">☰</div>
       <div className="flex flex-1 flex-col">
         <div className="flex items-center gap-3">
           <input
@@ -50,25 +36,16 @@ export default function SortableItem({ id, task, onToggle, onDelete }) {
             checked={!!task.done}
             onChange={() => onToggle(task.id)}
             className="w-4 h-4 rounded"
-            aria-label={`Mark ${task.text} done`}
           />
           <span className={`select-none ${task.done ? "line-through text-gray-400" : priorityColor}`}>
-            {task.text}
+            {task.sticker ? `${task.sticker} ` : ""}{task.text}
           </span>
         </div>
         <span className={`text-xs ${isOverdue ? "text-red-600 dark:text-red-400 font-bold" : "text-gray-500 dark:text-gray-300"}`}>
           {task.dueDate ? `Due: ${task.dueDate}` : ""} {task.priority ? `| Priority: ${task.priority}` : ""}
         </span>
       </div>
-
-      {/* Delete button */}
-      <button
-        onClick={() => onDelete(task.id)}
-        className="text-red-500 hover:text-red-700 dark:hover:text-red-400 ml-2"
-        aria-label="Delete task"
-      >
-        ✕
-      </button>
+      <button onClick={() => onDelete(task.id)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400 ml-2">✕</button>
     </motion.li>
   );
 }

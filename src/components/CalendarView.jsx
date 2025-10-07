@@ -3,11 +3,16 @@ import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 
 export default function CalendarView({ tasks, darkMode, selectedDate, setSelectedDate }) {
-  const tasksForDate = tasks.filter(task => task.dueDate && new Date(task.dueDate).toDateString() === selectedDate.toDateString());
+
+  const tasksForDate = tasks.filter(task =>
+    task.dueDate && new Date(task.dueDate).toDateString() === selectedDate.toDateString()
+  );
 
   const tileClassName = ({ date, view }) => {
     if (view === "month") {
-      const hasTask = tasks.some(task => task.dueDate && new Date(task.dueDate).toDateString() === date.toDateString());
+      const hasTask = tasks.some(task =>
+        task.dueDate && new Date(task.dueDate).toDateString() === date.toDateString()
+      );
       const isToday = date.toDateString() === new Date().toDateString();
       return [
         "rounded-lg transition-all",
@@ -20,23 +25,18 @@ export default function CalendarView({ tasks, darkMode, selectedDate, setSelecte
   const tileContent = ({ date, view }) => {
     if (view !== "month") return null;
 
-    const tasksOnDate = tasks.filter(task => task.dueDate && new Date(task.dueDate).toDateString() === date.toDateString());
+    const tasksOnDate = tasks.filter(task =>
+      task.dueDate && new Date(task.dueDate).toDateString() === date.toDateString()
+    );
     if (!tasksOnDate.length) return null;
 
     return (
-      <div className="flex justify-center mt-1 gap-1">
-        {tasksOnDate.slice(0, 3).map(task => (
-          <span
-            key={task.id}
-            className={`w-2 h-2 rounded-full ${
-              task.priority === "High" ? "bg-red-500" :
-              task.priority === "Low" ? "bg-green-500" : "bg-gray-500"
-            }`}
-          />
+      <div className="flex flex-col items-center mt-1 gap-1 max-h-16 overflow-y-auto sticker-scroll">
+        {tasksOnDate.map(task => (
+          <span key={task.id} className="text-xs">
+            {task.sticker}
+          </span>
         ))}
-        {tasksOnDate.length > 3 && (
-          <span className="text-xs text-gray-600 dark:text-gray-300">+{tasksOnDate.length - 3}</span>
-        )}
       </div>
     );
   };
@@ -59,8 +59,9 @@ export default function CalendarView({ tasks, darkMode, selectedDate, setSelecte
         ) : (
           <ul className="space-y-2">
             {tasksForDate.map(task => (
-              <li key={task.id} className="px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-md shadow-sm">
-                {task.text} {task.priority ? `| ${task.priority}` : ""}
+              <li key={task.id} className="px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-md shadow-sm flex items-center gap-2">
+                <span>{task.sticker}</span>
+                <span>{task.text} {task.priority ? `| ${task.priority}` : ""}</span>
               </li>
             ))}
           </ul>
@@ -68,6 +69,15 @@ export default function CalendarView({ tasks, darkMode, selectedDate, setSelecte
       </div>
 
       <style>{`
+        /* Scrollbar hidden */
+        .sticker-scroll {
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE 10+ */
+        }
+        .sticker-scroll::-webkit-scrollbar {
+          display: none; /* Chrome/Safari/Edge */
+        }
+
         /* Light mode */
         .react-calendar-light {
           background-color: #f9f9fb;
@@ -99,6 +109,29 @@ export default function CalendarView({ tasks, darkMode, selectedDate, setSelecte
         /* Current day */
         .react-calendar__tile--now {
           font-weight: bold;
+        }
+
+        /* Gradient fade for stickers */
+        .sticker-scroll {
+          position: relative;
+        }
+        .sticker-scroll::before,
+        .sticker-scroll::after {
+          content: '';
+          position: sticky;
+          left: 0;
+          right: 0;
+          height: 0.5rem;
+          pointer-events: none;
+          z-index: 10;
+        }
+        .sticker-scroll::before {
+          top: 0;
+          background: linear-gradient(to bottom, ${darkMode ? '#1f2937' : '#f9f9fb'}, transparent);
+        }
+        .sticker-scroll::after {
+          bottom: 0;
+          background: linear-gradient(to top, ${darkMode ? '#1f2937' : '#f9f9fb'}, transparent);
         }
       `}</style>
     </div>

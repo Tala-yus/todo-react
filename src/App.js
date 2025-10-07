@@ -4,22 +4,18 @@ import TaskInput from "./components/TaskInput";
 import Filters from "./components/Filters";
 import TaskList from "./components/TaskList";
 import CalendarView from "./components/CalendarView";
+import ProgressBar from "./components/ProgressBar";
 import confetti from "canvas-confetti";
 
 function App() {
-  const [tasks, setTasks] = useState(() => {
-    const saved = localStorage.getItem("tasks");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
+  const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem("tasks")) || []);
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
   const [filter, setFilter] = useState("all");
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => localStorage.setItem("tasks", JSON.stringify(tasks)), [tasks]);
-
   useEffect(() => {
-    if (darkMode) document.documentElement.classList.add("dark");
+    if(darkMode) document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
@@ -45,13 +41,20 @@ function App() {
 
           {/* Main area */}
           <div className="flex-1 flex flex-col bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 overflow-y-auto">
-            <TaskInput onAdd={(task) => setTasks(prev => [...prev, task])} />
-            <Filters filter={filter} setFilter={setFilter} clearCompleted={() => setTasks(prev => prev.filter(t => !t.done))} total={tasks.length} remaining={remaining} />
+            <ProgressBar tasks={tasks} />
+            <TaskInput onAdd={task => setTasks(prev => [...prev, task])} />
+            <Filters
+              filter={filter}
+              setFilter={setFilter}
+              clearCompleted={() => setTasks(prev => prev.filter(t => !t.done))}
+              total={tasks.length}
+              remaining={remaining}
+            />
             <TaskList
               tasks={tasks.filter(t => !t.dueDate || new Date(t.dueDate).toDateString() === selectedDate.toDateString())}
               setTasks={setTasks}
               filter={filter}
-              onToggle={id => setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))}
+              onToggle={id => setTasks(prev => prev.map(t => t.id === id ? {...t, done: !t.done} : t))}
               onDelete={id => setTasks(prev => prev.filter(t => t.id !== id))}
             />
           </div>
