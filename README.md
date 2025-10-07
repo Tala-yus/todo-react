@@ -32,14 +32,8 @@ npm install
 3. Start the development server:
 npm start
 
-Install dependencies:
 
-bash
-Copy code
-npm install
-Start the development server:
-
-Usage
+## Usage
 
 1.Add tasks using the input box.
 
